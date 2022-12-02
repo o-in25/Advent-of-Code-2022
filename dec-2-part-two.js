@@ -12,46 +12,19 @@ const reader = readline.createInterface({input});
 // win: z
 const actions = {
     a: {
-        x: {
-            result: 'loss',
-            score: 3
-        },
-        y: {
-            result: 'draw',
-            score: 1
-        },
-        z: {
-            result: 'win',
-            score: 2
-        }
+        x: { result: 'loss', score: 3 },
+        y: { result: 'draw', score: 1 },
+        z: { result: 'win',  score: 2 }
     },
     b: {
-        x: {
-            result: 'loss',
-            score: 1
-        },
-        y: {
-            result: 'draw',
-            score: 2
-        },
-        z: {
-            result: 'win',
-            score: 3
-        }
+        x: { result: 'loss', score: 1 },
+        y: { result: 'draw', score: 2 },
+        z: { result: 'win', score: 3 }
     },
-    c: {
-        x: {
-            result: 'loss',
-            score: 2 
-        },
-        y: {
-            result: 'draw',
-            score: 3
-        },
-        z: {
-            result: 'win',
-            score: 1
-        }
+    c: { 
+        x: { result: 'loss', score: 2 },
+        y: { result: 'draw', score: 3 },
+        z: { result: 'win', score: 1 }
     }
 }
 
