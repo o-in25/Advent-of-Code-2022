@@ -9,46 +9,19 @@ const reader = readline.createInterface({input});
 // scissors: c, z
 const actions = {
     a: {
-        x: {
-            result: 'draw',
-            score: 1
-        },
-        y: {
-            result: 'win',
-            score: 2
-        },
-        z: {
-            result: 'loss',
-            score: 3
-        }
+        x: { result: 'draw', score: 1 },
+        y: { result: 'win', score: 2 },
+        z: { result: 'loss', score: 3 }
     },
     b: {
-        x: {
-            result: 'loss',
-            score: 1
-        },
-        y: {
-            result: 'draw',
-            score: 2
-        },
-        z: {
-            result: 'win',
-            score: 3
-        }
+        x: { result: 'loss', score: 1 },
+        y: { result: 'draw', score: 2 },
+        z: { result: 'win', score: 3 }
     },
     c: {
-        x: {
-            result: 'win',
-            score: 1
-        },
-        y: {
-            result: 'loss',
-            score: 2
-        },
-        z: {
-            result: 'draw',
-            score: 3
-        }
+        x: { result: 'win', score: 1 },
+        y: { result: 'loss', score: 2 },
+        z: { result: 'draw', score: 3 }
     }
 }
 
