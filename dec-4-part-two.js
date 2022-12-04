@@ -18,12 +18,13 @@ reader.on('close', () => {
 
     const count = result.reduce((acc, val) => {
         const [left, right] = val;
-        if(left[0] >= right[0] || left[1] >= right[1]) {
+        if(!(left[0] > right[1] || left[1] < right [0])) {
             acc++;
-            console.log(val)
         }
+        
         return acc;
 
-    }, 0)
+    }, 0);
+
     console.log(count)
 });
