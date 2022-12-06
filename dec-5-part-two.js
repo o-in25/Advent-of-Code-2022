@@ -21,8 +21,8 @@ const buildBoard = (size) => {
 // 3x3 1, 5, 9, 13
 let lineNumber = 1;
 reader.on('line', line => {
-    if(lineNumber <= 8) {
-        buildBoard(9).reduce((acc, val, index) => {
+    if(lineNumber <= 3) {
+        buildBoard(3).reduce((acc, val, index) => {
             if(line.charAt(val).trim() !== '') {
                 acc.push({index, data: line.charAt(val)})
             }
@@ -31,7 +31,7 @@ reader.on('line', line => {
         }, rows)
     }
 
-    if(lineNumber >= 11) {
+    if(lineNumber >= 6) {
         const set = line.replace(/\D/g, '');
         if(set.length === 4) {
             instructions.push({
@@ -57,12 +57,13 @@ reader.on('close', () => {
         board.push({index: Number(key) + 1, data: _.reverse(data)})
     })
     instructions.forEach(instruction => {
+        const from = board.find(x => x.index === instruction.from);
+        const to = board.find(x => x.index === instruction.to);
+        const removed =_.takeRight(from.data, instruction.move);
         for(let i = 0; i < instruction.move; i++) {
-            const from = board.find(x => x.index === instruction.from);
-            const to = board.find(x => x.index === instruction.to);
-            const moved = from.data.pop();
-            to.data.push(moved);
+            from.data.pop();
         }
+        to.data = _.union(to.data, removed)
     });
 
     const result = board.reduce((acc, val) => acc.concat(_.last(val.data)), '')
