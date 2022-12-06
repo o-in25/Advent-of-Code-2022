@@ -1,30 +1,76 @@
 import fs from 'fs';
 import readline from 'readline';
 import _ from 'lodash';
+import { Console } from 'console';
 
 const input = fs.createReadStream('./files/dec-5.txt', 'utf-8');
 const reader = readline.createInterface({input});
 
 const rows = [];
-// 3x3 1, 5, 9
+const instructions = [];
+
+const board = [];
+
+const buildBoard = (size) => {
+    const arr = [1];
+    for(let i = 0; i < size; i++) {
+        arr.push(arr[i] + 4)
+    }
+    return arr;
+}
+
+// 3x3 1, 5, 9, 13
 let lineNumber = 1;
 reader.on('line', line => {
-    if(lineNumber <= 3) {
-        [1, 5, 9].forEach((match, index, arr) => {
-            if(line.charAt(match).trim() !== '') {
-                rows.push({index, data: line.charAt(match)})
+    if(lineNumber <= 8) {
+        buildBoard(9).reduce((acc, val, index) => {
+            if(line.charAt(val).trim() !== '') {
+                acc.push({index, data: line.charAt(val)})
             }
-        })
-        
+
+            return acc;
+        }, rows)
+    }
+
+    if(lineNumber >= 11) {
+        const set = line.replace(/\D/g, '');
+        if(set.length === 4) {
+            instructions.push({
+                move: Number(set.charAt(0).concat(set.charAt(1))),
+                from: Number(set.charAt(2)),
+                to: Number(set.charAt(3))
+            })        
+        } else {
+            instructions.push({
+                move: Number(set.charAt(0)),
+                from: Number(set.charAt(1)),
+                to: Number(set.charAt(2))
+            })
+        }
+
     }
     lineNumber++;
 });
 
 reader.on('close', () => {
-    const board = [];
     Object.entries(_.groupBy(rows, 'index')).forEach(([key, val]) => {
-        board.push({index: Number(key) + 1, data: val.map(x => x.data)})
+        const data = val.map(x => x.data);
+        board.push({index: Number(key) + 1, data: _.reverse(data)})
     })
+    console.log(instructions)
+    instructions.forEach(instruction => {
+        for(let i = 0; i < instruction.move; i++) {
+            const from = board.find(x => x.index === instruction.from);
+            if(!from) {
+                debugger;
+            }
+            const to = board.find(x => x.index === instruction.to);
+            const moved = from.data.pop();
+            to.data.push(moved);
+        }
+    });
 
-    console.log(board)
+    const result = board.reduce((acc, val) => acc.concat(_.last(val.data)), '')
+    console.log(result)
+
 })
