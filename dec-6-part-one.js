@@ -6,10 +6,10 @@ const reader = readline.createInterface({input});
 const offset = 4;
 reader.on('line', line => {
     const bufferSet = [];
-    for(let i = 0; i < [...line].length; i++) {
-        const str = line.slice(i, i + offset);
+    [...line].forEach((val, index) => {
+        const str = line.slice(index, index + offset);
         bufferSet.push([...new Set(str)])
-    }
+    });
     const matchStr = bufferSet.find(x => x.length === offset).reduce((acc, val) => acc.concat(val),'');
     const chars = line.indexOf(matchStr) + matchStr.length;
     console.log(chars) // 1804
