@@ -21,8 +21,8 @@ const buildBoard = (size) => {
 // 3x3 1, 5, 9, 13
 let lineNumber = 1;
 reader.on('line', line => {
-    if(lineNumber <= 3) {
-        buildBoard(3).reduce((acc, val, index) => {
+    if(lineNumber <= 8) {
+        buildBoard(9).reduce((acc, val, index) => {
             if(line.charAt(val).trim() !== '') {
                 acc.push({index, data: line.charAt(val)})
             }
@@ -31,7 +31,7 @@ reader.on('line', line => {
         }, rows)
     }
 
-    if(lineNumber >= 6) {
+    if(lineNumber >= 11) {
         const set = line.replace(/\D/g, '');
         if(set.length === 4) {
             instructions.push({
@@ -59,14 +59,17 @@ reader.on('close', () => {
     instructions.forEach(instruction => {
         const from = board.find(x => x.index === instruction.from);
         const to = board.find(x => x.index === instruction.to);
-        const removed =_.takeRight(from.data, instruction.move);
+        let popped = [];
         for(let i = 0; i < instruction.move; i++) {
-            from.data.pop();
+            popped.push(from.data.pop())
         }
-        to.data = _.union(to.data, removed)
+        popped = _.reverse(popped);
+        console.log(popped)
+        popped.forEach(x => to.data.push(x))
     });
 
+    
     const result = board.reduce((acc, val) => acc.concat(_.last(val.data)), '')
-    console.log(result)
+    console.log(result) // ZHSVRMJT
 
 })
