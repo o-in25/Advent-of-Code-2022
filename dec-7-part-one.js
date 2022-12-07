@@ -30,7 +30,9 @@ reader.on('line', line => {
 
         // cd ..
         case line.match(/\$ cd (\.\.)/)?.input: {
-
+            const parent = findParent([tree], current.value.name);
+            console.log(parent, current.value.name)
+            current = parent;
             break;
         }
 
@@ -50,10 +52,6 @@ reader.on('line', line => {
         // dir <name>
         case line.match(/dir [a-z]+/)?.input: {
             const name = line.split(' ')[1];
-            if(name === 'e') {
-                // console.log(current)
-            }
-            //console.log(current)
             const node = new Node({files: [], name});
             current.children.push(node);
             break;
@@ -61,7 +59,26 @@ reader.on('line', line => {
 
         // files
         default:
+            const [size, name] = line.split(' ');
+            current.value.files.push({name, size});
             break;
+    }
+
+
+      
+    function findParent(tree, name) {
+        for(let node of tree) {
+            if(node.value.name === name) {
+                return node;
+            }
+
+            if(node.children.length > 0) {
+                if(findParent(node.children, name)) {
+                    return node;
+                }
+            }
+        }
+        return false;
     }
 });
 
