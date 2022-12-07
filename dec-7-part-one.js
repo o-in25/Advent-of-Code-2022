@@ -1,13 +1,12 @@
 import fs from 'fs';
 import readline from 'readline';
+import _ from 'lodash';
 
 const input = fs.createReadStream('./files/dec-7.txt', 'utf-8');
 const reader = readline.createInterface({input});
 
 let tree;
-let currentDirectory = '';
-let previousDirectory = '';
-
+let sum = [];
 
 class Node {
     constructor(value) {
@@ -31,7 +30,6 @@ reader.on('line', line => {
         // cd ..
         case line.match(/\$ cd (\.\.)/)?.input: {
             const parent = findParent([tree], current.value.name);
-            console.log(parent, current.value.name)
             current = parent;
             break;
         }
@@ -80,12 +78,14 @@ reader.on('line', line => {
         }
         return false;
     }
+
+
+
 });
 
 
 
 reader.on('close', () => {
-    console.log(JSON.stringify(tree))
+    console.log(tree)
 });
-
 
