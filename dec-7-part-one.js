@@ -4,30 +4,62 @@ import readline from 'readline';
 const input = fs.createReadStream('./files/dec-7.txt', 'utf-8');
 const reader = readline.createInterface({input});
 
-const instructions = [];
 const tree = {};
-let currentDirectory = '/';
+let currentDirectory = '';
+let previousDirectory = '';
 reader.on('line', line => {
-    if(line.match(/\$ cd ([a-z]+)|(\/)|(\.\.)/)) {
-        const [delimiter, command, destination] = line.split(' ');
-        currentDirectory = destination;
-        if(!(destination in tree) && destination !== '..' && destination !== '/') {
-            tree[currentDirectory] = {files: []};
-        } else if(!(destination in tree) && destination !== '..' && destination === '/') {
+    switch(line) {
+        // cd /
+        case line.match(/\$ cd (\/)/)?.input:
+            // init the tree
+            currentDirectory = '/';
             tree.files = [];
-        }
-    } else if(!line.match(/\$ ls/)) {
-        if(currentDirectory === '/') {
-            if(!line.match(/dir [a-z]+/)) {
-                const [size, name] = line.split(' ');
-                tree.files.push({name, size})
+            break;
+        // cd ..
+        case line.match(/\$ cd (\.\.)/)?.input:
+            const parent = Object.entries(tree).find(([key, val]) => val[currentDirectory]);
+            if(parent) {
+                currentDirectory = parent[0];
+            } else {
+                currentDirectory = '/'
             }
-        }
+            break;
+        // cd <dir>
+        case line.match(/\$ cd [a-z]+/)?.input:
+            const dest = line.split(' ')[2];
+            previousDirectory = currentDirectory;
+            currentDirectory = dest;
+            break;
+        // ls
+        case line.match(/\$ ls/)?.input:
+            break;
+
+        // dir <name>
+        case line.match(/dir [a-z]+/)?.input:
+            const name = line.split(' ')[1];
+
+            if(currentDirectory === '/') {
+                if(!tree[name]) {
+                    tree[name] = {};
+                }
+                tree[name].files = [];
+            } else {
+
+                console.log(name, tree)
+                if(!tree[currentDirectory][name]) {
+                    tree[currentDirectory][name] = {};
+                }
+                tree[currentDirectory][name] = {};
+
+            }
+        // files
+        default:
+            break;
     }
 });
 
 reader.on('close', () => {
-    console.log(tree)
+    //console.log(tree)
 });
 
 
