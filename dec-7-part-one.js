@@ -4,62 +4,71 @@ import readline from 'readline';
 const input = fs.createReadStream('./files/dec-7.txt', 'utf-8');
 const reader = readline.createInterface({input});
 
-const tree = {};
+let tree;
 let currentDirectory = '';
 let previousDirectory = '';
+
+
+class Node {
+    constructor(value) {
+        this.value = value;
+        this.children = [];
+    }
+}
+
+let current = null;
 reader.on('line', line => {
     switch(line) {
+
         // cd /
-        case line.match(/\$ cd (\/)/)?.input:
-            // init the tree
-            currentDirectory = '/';
-            tree.files = [];
+        case line.match(/\$ cd (\/)/)?.input: {
+            const name = line.split(' ')[2];
+            tree = new Node({files: [], name});
+            current = tree;
             break;
+        }
+
         // cd ..
-        case line.match(/\$ cd (\.\.)/)?.input:
-            const parent = Object.entries(tree).find(([key, val]) => val[currentDirectory]);
-            if(parent) {
-                currentDirectory = parent[0];
-            } else {
-                currentDirectory = '/'
-            }
+        case line.match(/\$ cd (\.\.)/)?.input: {
+
             break;
+        }
+
         // cd <dir>
-        case line.match(/\$ cd [a-z]+/)?.input:
-            const dest = line.split(' ')[2];
-            previousDirectory = currentDirectory;
-            currentDirectory = dest;
+        case line.match(/\$ cd [a-z]+/)?.input: {
+            const name = line.split(' ')[2];
+            const child = current.children.find(x => x.value.name === name);
+            current = child;
             break;
+        }
+
         // ls
-        case line.match(/\$ ls/)?.input:
+        case line.match(/\$ ls/)?.input: {
             break;
+        }
 
         // dir <name>
-        case line.match(/dir [a-z]+/)?.input:
+        case line.match(/dir [a-z]+/)?.input: {
             const name = line.split(' ')[1];
-
-            if(currentDirectory === '/') {
-                if(!tree[name]) {
-                    tree[name] = {};
-                }
-                tree[name].files = [];
-            } else {
-
-                console.log(name, tree)
-                if(!tree[currentDirectory][name]) {
-                    tree[currentDirectory][name] = {};
-                }
-                tree[currentDirectory][name] = {};
-
+            if(name === 'e') {
+                // console.log(current)
             }
+            //console.log(current)
+            const node = new Node({files: [], name});
+            current.children.push(node);
+            break;
+        }
+
         // files
         default:
             break;
     }
 });
 
+
+
 reader.on('close', () => {
-    //console.log(tree)
+    console.log(JSON.stringify(tree))
 });
 
 
