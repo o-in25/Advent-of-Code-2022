@@ -15,25 +15,22 @@ reader.on('close', () => {
     const threshold = 100000;
     let runningSum = 0;
 
-    find(tree, (node, size) => {
-      if(size <= threshold) {
-        runningSum += size;
-      }
-    });
-  
-    console.log(runningSum);
-});
-
-function find(node, callback = () => {}) {
-    if(node.type !== 'directory') {
-        return Number(node.size);
+    function find(node) {
+        if(node.type !== 'directory') {
+            return Number(node.size);
+        }
+    
+        const sizes = node.children.map(child => find(child));
+        const sum = sizes.reduce((acc, val) => acc + val, 0)
+        if(sum <= threshold) {
+            runningSum += sum;
+        }
+        return sum;
     }
 
-    const sizes = node.children.map(child => find(child, callback));
-    const sum = sizes.reduce((acc, val) => acc + val, 0)
-    callback(node, sum);
-    return sum;
-}
+    find(tree);
+    console.log(runningSum); // 1611443
+});
 
 function showTree(node, depth = 0) {
     console.log(`${' '.repeat(depth * 2)} - ${node.name} ${node.type === 'directory'? '(dir)' : `file, size=${node.size})`}`);
