@@ -69,15 +69,6 @@ reader.on('line', line => {
 
 });
 
-function printTree(node, depth = 2) {
-    console.log(node.name)
-    if (node.children.length > 0) {
-        for (const child of node.children) {
-            printTree(child, depth + 1);
-        }
-    } 
-}
-
 function getSize(node) {
     if(node.children.length > 0) {
         for(const child of node.children) {
@@ -91,22 +82,19 @@ function getSize(node) {
 }
 
 reader.on('close', () => {
-    //25028495
-    // console.log(tree)
     getSize(tree);
-
     let sum = 0;
-    function printTree(node, depth = 0) {
+    function filterTree(node, threshold) {
         if (node.children.length) {
             for (const child of node.children) {
-                if(child.size < 100000) {
+                if(child.size < threshold) {
                     sum += child.size
                 }
-                printTree(child, depth + 1);
+                filterTree(child, threshold);
             }
         }
-    }
-    printTree(tree);
+    }    
+    filterTree(tree, 100000)
     console.log(sum);
 });
 
