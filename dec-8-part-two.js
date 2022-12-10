@@ -16,7 +16,7 @@ for(let row of map) {
     }
 }
 
-const score = scenicScore(candidates)// 1703
+const score = scenicScore(candidates) // 496650
 console.log(score);
 
 function scenicScore(candidates) {
