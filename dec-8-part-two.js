@@ -9,39 +9,48 @@ for(let row of map) {
     const columns = row.filter(x => x.top !== null).filter(x => x.bottom != null).filter(x => x.right != null).filter(x => x.left !== null)
     for(let column of columns) {
         // check top
-        const candidate = checkBoundaries(Object.assign([], map.flat()), column, map);
+        const candidate = getScenicScore(Object.assign([], map.flat()), column);
         if(candidate) {
             candidates.push(column);
         }
     }
 }
-console.log(candidates.length + getBorderSize(map[0].length)) // 1703
 
+const score = scenicScore(candidates)// 1703
+console.log(score);
 
-function getBorderSize(n) {
-    return (n * 2) + (n - 2 + n - 2)
+function scenicScore(candidates) {
+    const scores = candidates.map(x => x.scenicScore);
+    const result = scores.reduce((acc, val) => {
+        acc.push(val.reduce((a, b) => a * b, 1));
+        return acc;
+    }, [])
+    return Math.max(...result);
 }
 
-function checkBoundaries(flatMap, plot, map) {
-    let count = 0;
+function getScenicScore(flatMap, plot) {
     let visible = false;
-    ['top', 'bottom', 'left', 'right'].every(direction => {
+    plot.scenicScore = [];
+    ['top', 'bottom', 'left', 'right'].forEach(direction => {
         let next = flatMap.find(x => x.id === plot[direction]);
+        let scenicScore = 0;
         while(true) {
-            count++;
             if(plot.value <= next.value) {
+                scenicScore++;
                 break;
             }
 
+
             if(next[direction] === null) {
+                scenicScore++;
                 visible = true;
                 break;
             }
-
+            scenicScore++;
             next = flatMap.find(x => x.id === next[direction]);
         }
+        plot.scenicScore.push(scenicScore);
 
-        return !visible;
     });
 
     return visible;
