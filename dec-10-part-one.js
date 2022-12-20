@@ -1,6 +1,4 @@
 import { readFileSync } from "fs";
-import hash from 'object-hash';
-import _ from 'lodash';
 
 const lines = readFileSync("./files/dec-10.txt", { encoding: "utf-8" }).replace(/\r/g, "")
     .trim()
