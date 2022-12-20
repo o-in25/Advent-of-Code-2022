@@ -12,19 +12,25 @@ class Monkey {
         this.items = items;
         this.expression = expression;
         this.worryLevel = 1;
+        this.worryLevels = [];
+        this.runningTotal = 0;
     }
 
     play() {
         this.items.forEach(item => {
             this.worryLevel = item;
-            let expr = this.expression.evaluate(this.worryLevel);
+            this.worryLevel = this.expression.evaluate(item);
             // do this before branch
-            const newValue = Math.floor(expr / 3);
-            const branch = this.expression.evaluatePredicate(newValue);
-            const val = [newValue, branch];
-            console.log(val)
+            this.worryLevel = Math.floor(this.worryLevel / 3);
+            const branch =  this.expression.evaluatePredicate(this.worryLevel);
+            if(this.worryLevel === 25) {
+                console.log(this.worryLevel)
+            }
+            throwAtMonkey(this.worryLevel, branch);
         });
+        this.items = [];
     }
+
 }
 
 class Expression {
@@ -37,12 +43,16 @@ class Expression {
     }
 
     evaluate(oldValue) {
+        if(this.operand === 'old') {
+            console.log('old')
+        }
+        const operand = this.operand === 'old'? oldValue : Number(this.operand);
         switch(this.operator) {
             case '*': {
-                return oldValue * this.operand;
+                return oldValue * operand;
             }
             case '+': {
-                return oldValue + this.operand;
+                return oldValue + operand;
             }
         }
     }
@@ -50,28 +60,19 @@ class Expression {
     evaluatePredicate(value) {
         const predicateResult = value % this.predicate === 0;
         if(predicateResult) {
-            this.branch.trueBranch;
+            return this.branch.trueBranch;
         }
         return this.branch.falseBranch;
 
     }
 }
 
+function throwAtMonkey(worryLevel, monkeyName) {
+    const monkey = monkeys.find(monkey => monkey.name === monkeyName);
+    monkey.items.push(worryLevel);
+    monkey.worryLevels.push(worryLevel)
 
-// lines.forEach((line, index) => {
-//     let [name, items, operation, predicate, trueBranch, falseBranch] = line;
-//     items = items.split(':')[1].split(',').map(item => Number(item.trim()));
-//     console.log(operation)
-//     operation = operation.split(':')[1].trim(' ').slice(10).split(' '); //let [ operator, operand ] = operation;
-//     predicate = Number(predicate.substring(19));
-//     trueBranch = Number(trueBranch.substring(25));
-//     falseBranch = Number(falseBranch.substring(26));
-
-//     const monkey = new Monkey(index, items, new Expression(operation, predicate, {trueBranch, falseBranch}));
-//     monkies.push(monkey);
-// });
-
-
+}
 const monkeys  = lines.reduce((acc, curr, index) => {
     let [name, items, operation, predicate, trueBranch, falseBranch] = curr;
     items = items.split(':')[1].split(',').map(item => Number(item.trim()));
@@ -86,4 +87,6 @@ const monkeys  = lines.reduce((acc, curr, index) => {
     return acc;
 }, []);
 
+monkeys.forEach(monkey => monkey.play())
+monkeys.forEach(monkey => monkey.play())
 console.log(monkeys);
