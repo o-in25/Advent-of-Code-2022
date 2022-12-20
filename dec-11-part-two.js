@@ -15,17 +15,14 @@ class Monkey {
         this.inspectedItems = 0;
     }
 
-    play() {
+    play(divider) {
         this.items.forEach(item => {
             this.inspectedItems++;
             this.worryLevel = item;
             this.worryLevel = this.expression.evaluate(item);
             // do this before branch
-            this.worryLevel = Math.floor(this.worryLevel / 3);
+            this.worryLevel = this.worryLevel % divider;
             const branch =  this.expression.evaluatePredicate(this.worryLevel);
-            if(this.worryLevel === 25) {
-                console.log(this.worryLevel)
-            }
             throwAtMonkey(this.worryLevel, branch);
         });
         this.items = [];
@@ -43,9 +40,6 @@ class Expression {
     }
 
     evaluate(oldValue) {
-        if(this.operand === 'old') {
-            console.log('old')
-        }
         const operand = this.operand === 'old'? oldValue : Number(this.operand);
         switch(this.operator) {
             case '*': {
@@ -75,7 +69,6 @@ function throwAtMonkey(worryLevel, monkeyName) {
 const monkeys = lines.reduce((acc, curr, index) => {
     let [name, items, operation, predicate, trueBranch, falseBranch] = curr;
     items = items.split(':')[1].split(',').map(item => Number(item.trim()));
-    console.log(operation)
     operation = operation.split(':')[1].trim(' ').slice(10).split(' '); //let [ operator, operand ] = operation;
     predicate = Number(predicate.substring(19));
     trueBranch = Number(trueBranch.substring(25));
@@ -86,10 +79,12 @@ const monkeys = lines.reduce((acc, curr, index) => {
     return acc;
 }, []);
 
-for(let i = 0; i < 20; i++) {
-    monkeys.forEach(monkey => monkey.play())   
+const divider = monkeys.map((monkey) => monkey.expression.predicate).reduce((a, b) => a * b, 1);
+console.log(divider)
+for(let i = 0; i < 10000; i++) {
+    monkeys.forEach(monkey => monkey.play(divider))   
 }
 
 const sums = monkeys.map(monkey => monkey.inspectedItems).sort((a, b) => b - a);
 const score = sums[0] * sums[1];
-console.log(score); // 90294
+console.log(score); // 18170818354
