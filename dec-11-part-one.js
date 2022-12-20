@@ -12,12 +12,12 @@ class Monkey {
         this.items = items;
         this.expression = expression;
         this.worryLevel = 1;
-        this.runningTotal = 0;
+        this.inspectedItems = 0;
     }
 
     play() {
         this.items.forEach(item => {
-            this.runningTotal++;
+            this.inspectedItems++;
             this.worryLevel = item;
             this.worryLevel = this.expression.evaluate(item);
             // do this before branch
@@ -91,4 +91,6 @@ for(let i = 0; i < 20; i++) {
     monkeys.forEach(monkey => monkey.play())   
 }
 
-console.log(monkeys.map(monkey => monkey.runningTotal));
+const sums = monkeys.map(monkey => monkey.inspectedItems).sort((a, b) => b - a);
+const score = sums[0] * sums[1];
+console.log(score); // 90294
