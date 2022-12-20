@@ -12,12 +12,12 @@ class Monkey {
         this.items = items;
         this.expression = expression;
         this.worryLevel = 1;
-        this.worryLevels = [];
         this.runningTotal = 0;
     }
 
     play() {
         this.items.forEach(item => {
+            this.runningTotal++;
             this.worryLevel = item;
             this.worryLevel = this.expression.evaluate(item);
             // do this before branch
@@ -70,7 +70,7 @@ class Expression {
 function throwAtMonkey(worryLevel, monkeyName) {
     const monkey = monkeys.find(monkey => monkey.name === monkeyName);
     monkey.items.push(worryLevel);
-    monkey.worryLevels.push(worryLevel)
+
 
 }
 const monkeys  = lines.reduce((acc, curr, index) => {
@@ -87,6 +87,8 @@ const monkeys  = lines.reduce((acc, curr, index) => {
     return acc;
 }, []);
 
-monkeys.forEach(monkey => monkey.play())
-monkeys.forEach(monkey => monkey.play())
-console.log(monkeys);
+for(let i = 0; i < 20; i++) {
+    monkeys.forEach(monkey => monkey.play())   
+}
+
+console.log(monkeys.map(monkey => monkey.runningTotal));
