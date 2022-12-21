@@ -1,81 +1,78 @@
 import { readFileSync } from "fs";
 
 class Pair {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
+    constructor(row, col) {
+        this.row = row;
+        this.col = col;
     }
 }
 
 const grid = readFileSync("./files/dec-12.txt", { encoding: "utf-8" })
+    .replace(/\r/g, "")
     .trim()
     .split("\n")
     .map(line => [...line]);
 
-let [start, end] = getStartAndEnd(grid).map(point => new Pair(point.row, point.col));
+let [start, end] = getPairs(grid).map(point => new Pair(point.row, point.col));
+
+grid[end.row][end.col] = grid[end.row][end.col].toLocaleLowerCase();
 
 const visited = new Set();
 
 shortestPath(start, end);
 console.log(visited.size)
-//console.log(grid[0].length, "<===========")
 function shortestPath(start, end) {
-    if(start.x === 2 && start.y === 4) {
-        console.log('yue')
-    }
-    if(start.x === end.x && start.y === end.y) {
-        console.log('end')
+    if(start.row === end.row && start.col === end.col) {
         return;
     }
-    visited.add(`${start.y}-${start.x}`)
+    visited.add(`${start.row}-${start.col}`)
 
 
     // down
-    if(isValid(start, start.x, start.y - 1)) {
-        start.y--;
+    if(isValid(start, start.row - 1, start.col)) {
+        start.row--;
         shortestPath(start, end)
     }
 
     // right 
-    if(isValid(start, start.x + 1, start.y)) {
-        start.x++;
+    if(isValid(start, start.row, start.col + 1)) {
+        start.col++;
         shortestPath(start, end)
     }
 
     // top
-    if(isValid(start, start.x, start.y + 1)) {
-        start.y++;
+    if(isValid(start, start.row + 1, start.col)) {
+        start.row++;
         shortestPath(start, end)
     }
 
     // left
-    if(isValid(start, start.x - 1, start.y)) {
-        start.x--;
+    if(isValid(start, start.row, start.col - 1)) {
+        start.col--;
         shortestPath(start, end)
     }
 
 
 
-    visited.delete(`${start.x}-${start.y}`)
+    visited.delete(`${start.row}-${start.col}`)
 }
 
-// x = col
-// y = row
-function isValid(current, x, y) {
-    if(y < 0 || x < 0 || y > grid.length - 1 || x > grid[0].length - 1) {
+function isValid(current, row, col) {
+    if(row < 0 || col < 0 || row > grid.length - 1 || col > grid[0].length - 1) {
         return false;
     }
 
-    if(visited.has(`${y}-${x}`)) {
+    if(visited.has(`${row}-${col}`)) {
         return false;
     }
 
-    if(grid[current.y][current.x] === 'S' || grid[y][x] === 'S') {
+    if(grid[current.row][current.col] === 'S' || grid[row][col] === 'S') {
         return true;
 
     }
-    const currentChar = grid[current.y][current.x].toLocaleLowerCase().charCodeAt(0) - 96;
-    const nextChar = grid[y][x].toLocaleLowerCase().charCodeAt(0) - 96;
+
+    const currentChar = grid[current.row][current.col].toLocaleLowerCase().charCodeAt(0) - 96;
+    const nextChar = grid[row][col].toLocaleLowerCase().charCodeAt(0) - 96;
 
     if(nextChar - currentChar >= 2) {
         return false;
@@ -84,7 +81,7 @@ function isValid(current, x, y) {
     return true;
 }
 
-function getStartAndEnd(grid) {
+function getPairs(grid) {
     const points = [];
     for(let row = 0; row < grid.length; row++) {
         for(let col = 0; col < grid[row].length; col++) {
