@@ -1,31 +1,44 @@
-import { lstat, readFileSync } from "fs";
+import { readFileSync } from "fs";
 import _ from "lodash";
+
+// for debugging 
+const answers = [3, 5, 6, 8, 9, 12, 13, 14, 15, 17, 18, 20, 21, 25, 27, 29, 30, 35, 40, 41, 46, 48, 52, 53, 55, 57, 58, 59, 61, 63, 64, 65, 71, 72, 74, 75, 76, 78, 79, 80, 83, 84, 86, 88, 89, 90, 93, 95, 96, 98, 99, 102, 103, 104, 107, 110, 111, 112, 113, 114, 121, 122, 125, 127, 130, 131, 134, 136, 139, 141, 142, 143, 145, 148, 149];
+
 const pairs = _.chunk(readFileSync("./files/dec-13.txt", { encoding: "utf-8" })
     .replace(/\r/g, "")
     .split("\n")
     .filter(packet => packet !== '')
     .map(packet => JSON.parse(packet)), 2);
 
-const correctPairs = [];
-const incorrectPairs = [];
-
-let pairNumber = 1;
-for(const pair of pairs) {
-    const [left, right] = Object.assign([], pair);
+console.log(pairs[0].flat())
+const indicies = pairs.reduce((acc, curr, index) => {
+    const [left, right] = Object.assign([], curr);
     const valid = read(left, right)
-    console.log(`${valid} == Pair ${pairNumber} ==`)
-    pairNumber++;
-}
+    if(valid) {
+        acc.push(index + 1);
+    }
+    return acc;
+}, []);
+console.log(_.difference(indicies, answers), '<==')
+
+// line 46
+const sum = indicies.reduce((acc, curr) => acc + curr, 0)
+console.log(sum)
+ // 5940. 5692
+// 5684
+
 
 function read(left, right) {
+
     const lhs = left.shift();
     const rhs = right.shift();
 
-    if(!lhs) {
+
+    if(lhs === undefined) {
         return true;
     }
 
-    if(!rhs) {
+    if(rhs === undefined) {
         return false;
     }
 
@@ -56,18 +69,3 @@ function read(left, right) {
 
 
 }
-
-
-function isListEmpty(list) {
-    if(Array.isArray(list)) {
-        if(list.length === 0) {
-            return true;
-        }
-        return isListEmpty(list.shift());
-    }
-
-    return false;
-
-}
-
-
