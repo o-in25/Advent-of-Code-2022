@@ -10,8 +10,10 @@ const pairs = _.chunk(readFileSync("./files/dec-13.txt", { encoding: "utf-8" })
     .filter(packet => packet !== '')
     .map(packet => JSON.parse(packet)), 2);
 
-console.log(pairs[0].flat())
 const indicies = pairs.reduce((acc, curr, index) => {
+    if(index == 15) {
+        console.log(index)
+    }
     const [left, right] = Object.assign([], curr);
     const valid = read(left, right)
     if(valid) {
@@ -19,9 +21,8 @@ const indicies = pairs.reduce((acc, curr, index) => {
     }
     return acc;
 }, []);
-console.log(_.difference(indicies, answers), '<==')
-
 // line 46
+console.log(indicies)
 const sum = indicies.reduce((acc, curr) => acc + curr, 0)
 console.log(sum)
  // 5940. 5692
@@ -48,6 +49,9 @@ function read(left, right) {
             return lhs < rhs;
         }
     } else if(Array.isArray(lhs) && Array.isArray(rhs)) {
+        if(lhs.length === 0 && rhs.length === 0 && left.length && right.length)  {
+            return read(left, right)
+        } 
         return read(lhs, rhs);
     } else {
         // left one array? then right is number
